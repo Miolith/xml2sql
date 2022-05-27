@@ -8,14 +8,13 @@ import logging
 
 
 # SQL_INDEX is the name of the default primary key 
-# It's an integer that increments 
-# nouvelle insertion dans une table
+# This column is an integer that increments by 1 with each new
+# instance of a markup
 SQL_INDEX = "sql_index"
 
-# Une balise xml peut contenir du text dans un CDATA
-# ou simplement entre deux balises, une colonne SQL
-# est donc réservée pour stocker ce texte.
-# XML_TEXT étant le nom de cette colonne
+# A markup can contain text inside it or inside a CDATA,
+# an SQL column is thus used to store this text.
+# Its name is XML_TEXT
 XML_TEXT = "xml_text"
 
 # XML_FILE is the name of the SQL column that will contain
