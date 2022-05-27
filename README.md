@@ -1,6 +1,6 @@
 # xml2sql
 
-Plugin d'input permettant de convertir des fichiers XML en bases de données SQLite dans `input.db`
+Program that transforms XML files into relational database
 
 ## Requirements
 
