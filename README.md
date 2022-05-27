@@ -14,6 +14,7 @@ Program that transforms XML files into relational database
 
 Exemple from example.ini
 ```ini
+[DEFAULT]
 ; List of files to import
 ; Supports the glob format
 ; Example : files = data_*.xml single_file.xml
