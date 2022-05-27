@@ -4,7 +4,7 @@ Program that transforms XML files into relational database
 
 ## Requirements
 
-- `pip install -r requirements`
+- `pip install -r requirements.txt`
 
 ## Usage
 
