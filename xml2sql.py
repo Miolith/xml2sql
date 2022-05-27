@@ -3,6 +3,8 @@ import sqlite3
 import sys
 from lxml import etree
 import configparser as cp
+import logging
+
 
 
 # SQL_INDEX is the name of the default primary key 
@@ -21,12 +23,19 @@ XML_TEXT = "xml_text"
 XML_FILE = "xml_file"
 
 
+"""
+Returns a dictionary with the content of the ini file
+"""
 def parse_ini(conf_file: str):
     conf = cp.ConfigParser()
-    conf.read(conf_file)
+    with open(conf_file, "r") as file:
+        conf.read(conf_file)
     return conf
 
 
+"""
+Returns a dictionary with the content of the XML file
+"""
 def parse_xml(file: str):
     return etree.parse(file).getroot()
 
@@ -65,11 +74,11 @@ def get_primary_keys(node, primconf, index=dict()) -> set:
 
 
 """
-Pour chaque balise, mettre ses attributs, clé(s) primaire(s) et
-clé(s) étrangère(s) dans les dictionnaires 'tables', 'primkeys' et
-'forkeys' sauf si la balise est spécifiée dans 'ignore' 
+For each markup, put its attributes, its primary keys and
+its foreign keys in the dictionaries 'tables', 'primkeys'
+and 'forkeys' unless the markup is in 'ignore'
 """
-def def_tables(node, conf, ignore: set, tables, primkeys, forkeys):
+def def_tables(node, conf, ignore, tables, primkeys, forkeys):
     table_name = node.tag.lower()
 
     if table_name not in ignore:
@@ -82,7 +91,7 @@ def def_tables(node, conf, ignore: set, tables, primkeys, forkeys):
             forkeys[table_name] = foreign
             primkeys[table_name] = primary
         else:
-            # On fusionne en cas de nouveaux attributs
+            # We merge new attributes
             tables[table_name] |= table_cols
             forkeys[table_name] |= foreign
 
@@ -191,15 +200,22 @@ def generate_tables(con: sqlite3.Connection, conf: cp.ConfigParser, files: set[s
 
     con.commit()
 
+def connect_to_db(database: str = "output.db") -> sqlite3.Connection:
+    con = sqlite3.connect(database)
+    con.row_factory = sqlite3.Row
+    logger = logging.getLogger()
+    con.set_trace_callback(logger.debug)
+    return con
+
 
 def main(conf_file: str):
     conf = parse_ini(conf_file)
-    con = connect_to_db(INPUT_DB)
+    con = connect_to_db("output/output.db")
 
     file_list = set()
 
     for files in conf["DEFAULT"]["files"].split(' '):
-        for file in glob("data/" + files):
+        for file in glob(files):
             file_list.add(file)
 
     generate_tables(con, conf, file_list)

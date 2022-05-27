@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Domain name="test" version="6.5.1l" generationDate="Wed Dec 22 16:32:02 2021">
+  <Queues>
+    <Queue name="queue_vt2sapr3" comment="Generated Queue"/>
+  </Queues>
+  <Environments>
+    <Environment name="ENV_SAP">
+      <Applications>
+        <Application name="ALL">
+          <Jobs>
+            <Job name="ALL_MM_CLOSE_PERIOD_AMERICAS" comment="Imported from SAP" queue="queue_vt2sapr3" retcode="-1" status="W" statusTime="22-12-2021 16:07:50" jobType="SAPR3">
+              <Script><![CDATA[#SAPR3#]]></Script>
+              <Parameters>
+                <Parameter><![CDATA[CRESTARTASAPWAITCHILD]]></Parameter>
+                <Parameter><![CDATA[ALL_MM_CLOSE_PERIOD_AMERICAS]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZMX_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZUS_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZCR_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZGT_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZHN_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZNI_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZSV_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZCA_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=SK02 /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZBR_CLOSE_MM /lang=PT /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZDO_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZEC_CLOSE_MM /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80 /class=C]]></Parameter>
+              </Parameters>
+              <Node objectType="job" x="0" y="1560" z="0"/>
+            </Job>
+          </Jobs>
+        </Application>
+        <Application name="EN">
+          <Jobs>
+            <Job name="EN_ML_OPEN_PERIOD" comment="Imported from SAP" queue="queue_vt2sapr3" retcode="-1" status="W" statusTime="22-12-2021 16:07:50" jobType="SAPR3">
+              <Script><![CDATA[#SAPR3#]]></Script>
+              <Parameters>
+                <Parameter><![CDATA[CRESTARTASAPWAITCHILD]]></Parameter>
+                <Parameter><![CDATA[EN_ML_OPEN_PERIOD]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZMX_OPEN_ML /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZUS_OPEN_ML /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZCR_OPEN_ML /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80]]></Parameter>
+                <Parameter><![CDATA[RMMMPERI,ZEC_OPEN_ML /lang=EN /armod=1 /user=BACKGROUND /imp=Dummy /paart=X_65_80 /class=C]]></Parameter>
+              </Parameters>
+              <Node objectType="job" x="0" y="1560" z="0"/>
+            </Job>
+          </Jobs>
+        </Application>
+      </Applications>
+      <Graph name="ENV_SAP"/>
+    </Environment>
+  </Environments>
+  <JobApplicationServers>
+    <JobApplicationServer id="f6shdf67ghs87ge7raz7tzt7ikj000" name="C65" comment="" type="SAPR3">
+      <Properties>
+        <Property key="SAP_PROG" value="1"/>
+        <Property key="VT_CLT" value="800"/>
+        <Property key="VT_CRYPT" value="1"/>
+        <Property key="VT_DEST" value="C65"/>
+        <Property key="VT_GSRVCE" value=""/>
+        <Property key="VT_GWAY" value=""/>
+        <Property key="VT_INTERFACE" value="XBP"/>
+        <Property key="VT_LANG" value="FR"/>
+        <Property key="VT_MODE" value="R/3"/>
+        <Property key="VT_SYS" value="03"/>
+        <Property key="VT_TRACE" value="OFF"/>
+        <Property key="VT_VERSION" value="2.0"/>
+      </Properties>
+    </JobApplicationServer>
+  </JobApplicationServers>
+</Domain>
