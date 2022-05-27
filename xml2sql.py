@@ -28,7 +28,7 @@ Returns a dictionary with the content of the ini file
 """
 def parse_ini(conf_file: str):
     conf = cp.ConfigParser()
-    with open(conf_file, "r") as file:
+    with open(conf_file, "r"):
         conf.read(conf_file)
     return conf
 
@@ -75,10 +75,10 @@ def get_primary_keys(node, primconf, index=dict()) -> set:
 
 """
 For each markup, put its attributes, its primary keys and
-its foreign keys in the dictionaries 'tables', 'primkeys'
+its foreign keys in the dictionaries 'columns', 'primkeys'
 and 'forkeys' unless the markup is in 'ignore'
 """
-def def_tables(node, conf, ignore, tables, primkeys, forkeys):
+def def_tables(node, conf, ignore, columns, primkeys, forkeys):
     table_name = node.tag.lower()
 
     if table_name not in ignore:
@@ -86,25 +86,25 @@ def def_tables(node, conf, ignore, tables, primkeys, forkeys):
         table_cols = get_columns(node, conf["primary_keys"], foreign)
         primary = get_primary_keys(node, conf["primary_keys"])
 
-        if table_name not in tables:
-            tables[table_name] = table_cols
+        if table_name not in columns:
+            columns[table_name] = table_cols
             forkeys[table_name] = foreign
             primkeys[table_name] = primary
         else:
             # We merge new attributes
-            tables[table_name] |= table_cols
+            columns[table_name] |= table_cols
             forkeys[table_name] |= foreign
 
     for child in node.getchildren():
-        def_tables(child, conf, ignore, tables, primkeys, forkeys)
+        def_tables(child, conf, ignore, columns, primkeys, forkeys)
 
 
-def create_tables(con, tables, primkeys, forkeys):
-    for table_name in tables.keys():
+def create_tables(con, columns, primkeys, forkeys):
+    for table_name in columns.keys():
         query = f"""CREATE TABLE IF NOT EXISTS '{table_name}'(
                     %s,
                     PRIMARY KEY (%s)""" %\
-                (',    '.join(tables[table_name]),
+                (',    '.join(columns[table_name]),
                  ', '.join(primkeys[table_name]))
 
         for key in forkeys[table_name].items():
@@ -115,11 +115,11 @@ def create_tables(con, tables, primkeys, forkeys):
         con.execute(query)
 
 
-def get_parent_key(tables, node, forkey):
+def get_parent_key(columns, node, forkey):
     parent = node.getparent()
     table, key = forkey
 
-    while parent is not None and parent.tag not in tables:
+    while parent is not None and parent.tag not in columns:
         parent = parent.getparent()
         
 
@@ -131,14 +131,14 @@ def get_parent_key(tables, node, forkey):
         return parent.attrib[key]
 
 
-def fill_tables(con, node, tables, primkeys, forkeys, file = None):
+def fill_tables(con, node, columns, primkeys, forkeys, file = None):
     table_name = node.tag.lower()
 
     if table_name == XML_FILE:
         file = node.attrib["file"]
-    elif table_name in tables:
+    elif table_name in columns:
         values = []
-        cols = tables[table_name]
+        cols = columns[table_name]
 
         for col in cols:
             if col in node.attrib:
@@ -149,7 +149,7 @@ def fill_tables(con, node, tables, primkeys, forkeys, file = None):
 
             elif col in forkeys[table_name]:
                 values.append(get_parent_key(
-                    tables, node, forkeys[table_name][col]))
+                    columns, node, forkeys[table_name][col]))
 
             elif col == XML_TEXT:
                 values.append(node.text)
@@ -165,7 +165,7 @@ def fill_tables(con, node, tables, primkeys, forkeys, file = None):
         con.execute(query, values)
 
     for child in node.getchildren():
-        fill_tables(con, child, tables, primkeys, forkeys, file)
+        fill_tables(con, child, columns, primkeys, forkeys, file)
 
 
 def merge_xml_files(files: set[str]):
@@ -180,23 +180,22 @@ def generate_tables(con: sqlite3.Connection, conf: cp.ConfigParser, files: set[s
     ignore = set(conf["DEFAULT"]["ignore"].lower().split()) | {XML_FILE, "any2vtom_root"}
 
     root = merge_xml_files(files)
-    print(etree.tostring(root, pretty_print=True))
     
-    # tables['table'] = {'colonne1', 'colonne2', ...}
-    # Liste des colonnes pour chaque table
-    tables: dict[str, set] = dict()
+    # columns['table'] = {'column1', 'column2', ...}
+    # Set of (almost) all the columns for each table
+    columns: dict[str, set] = dict()
 
-    # primkeys['table'] = {'colonne1', ...}
-    # Liste des clés primaires pour chaque table
+    # primkeys['table'] = {'column1', ...}
+    # Set of all the primary keys for each table
     primkeys: dict[str, set] = dict()
     
-    # forkeys['table'] = {'colonne2': ('table_parent', 'clé_primaire_parent')}
-    # Liste des clés étrangères pour chaque table
+    # forkeys['table'] = {'column1': ('parent_table', 'parent_primary_key')}
+    # Set of all the foreign keys for each table
     forkeys: dict[str, dict[str, tuple[str, str]]] = dict()
 
-    def_tables(root, conf, ignore, tables, primkeys, forkeys)
-    create_tables(con, tables, primkeys, forkeys)
-    fill_tables(con, root, tables, primkeys, forkeys)
+    def_tables(root, conf, ignore, columns, primkeys, forkeys)
+    create_tables(con, columns, primkeys, forkeys)
+    fill_tables(con, root, columns, primkeys, forkeys)
 
     con.commit()
 
