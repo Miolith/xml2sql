@@ -220,6 +220,6 @@ def main(conf_file: str):
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        raise ValueError("xml: Nombre d'arguments incorrect")
+        raise ValueError("xml: Incorrect amount of parameters")
 
     main(sys.argv[1])
