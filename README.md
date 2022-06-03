@@ -9,7 +9,19 @@ Program that transforms XML files into relational database
 
 ## Usage
 
-`python xml2sql.py config/conf_xml.ini`
+```
+usage: xml2sql.py [-h] [--files FILES [FILES ...]] [--config CONFIG_FILE] [-o OUTPUT_FILE]
+
+Python program to transform XML into relational database (SQLite)
+
+options:
+  -h, --help            show this help message and exit
+  -f FILES [FILES ...], --files FILES [FILES ...]
+  --config CONFIG, -c CONFIG
+  -o OUTPUT, --output OUTPUT
+```
+
+Example : `python xml2sql.py -f input/example.xml -c config/example.ini -o output.db`
 
 ## Config file
 
