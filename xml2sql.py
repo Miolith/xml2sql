@@ -4,6 +4,8 @@ import sys
 from lxml import etree
 import configparser as cp
 import logging
+from src.args import generate_args
+from src.database import connect_to_db
 
 
 
@@ -198,28 +200,13 @@ def generate_tables(con: sqlite3.Connection, conf: cp.ConfigParser, files: set[s
 
     con.commit()
 
-def connect_to_db(database: str = "output.db") -> sqlite3.Connection:
-    con = sqlite3.connect(database)
-    con.row_factory = sqlite3.Row
-    logger = logging.getLogger()
-    con.set_trace_callback(logger.debug)
-    return con
 
+def main():
+    args = generate_args()
+    conf = parse_ini(args.config)
+    con = connect_to_db(args.output)
 
-def main(conf_file: str):
-    conf = parse_ini(conf_file)
-    con = connect_to_db("output/output.db")
-
-    file_list = set()
-
-    for files in conf["DEFAULT"]["files"].split(' '):
-        for file in glob(files):
-            file_list.add(file)
-
-    generate_tables(con, conf, file_list)
+    generate_tables(con, conf, set(args.files))
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        raise ValueError("xml: Incorrect amount of parameters")
-
-    main(sys.argv[1])
+    main()
